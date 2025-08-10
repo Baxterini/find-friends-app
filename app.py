@@ -14,10 +14,16 @@ st.set_page_config(page_title="Find Friends — V5+", page_icon="🤝", layout="
 HERE = Path(__file__).parent
 SEP = ';'
 DATA_PATH = HERE / "welcome_survey_simple_v2.csv"
-MODEL_NAME = "welcome_survey_clustering_pipeline_v2"
-MODEL_PATH = HERE / f"{MODEL_NAME}.pkl"  # wskazuje na plik .pkl
+MODEL_NAME = "welcome_survey_clustering_pipeline_v2"  # bez .pkl
+MODEL_PATH = HERE / MODEL_NAME  # też bez .pkl — PyCaret doda sam
 CLUSTER_INFO_PATH = HERE / "welcome_survey_cluster_names_and_descriptions_v2.json"
 COLS = ["age", "edu_level", "fav_animals", "fav_place", "gender"]
+
+# === FUNKCJE ===
+@st.cache_resource
+def get_model():
+    return load_model(str(MODEL_PATH))
+
 
 # === KOLEJNOŚĆ KATEGORII (do mediany wieku) ===
 AGE_ORDER = ['<18', '18-24', '25-34', '35-44', '45-54', '55-64', '>=65', 'unknown']

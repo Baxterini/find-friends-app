@@ -1,6 +1,4 @@
-import json
-
-cluster_info = {
+ {
     "0": {
         "name": "🌿 Introwertyczni Marzyciele",
         "description": "Grupa osób ceniących spokój i kontemplację. Preferują kameralne spotkania, lubią naturę i zwierzęta. Często mają wykształcenie wyższe i cenią sobie czas na refleksję."
@@ -35,7 +33,3 @@ cluster_info = {
     }
 }
 
-with open("modul_7/find_friends_v3/welcome_survey_cluster_names_and_descriptions_v2.json", "w", encoding="utf-8") as f:
-    json.dump(cluster_info, f, ensure_ascii=False, indent=4)
-
-print("✅ JSON nadpisany nowymi opisami")

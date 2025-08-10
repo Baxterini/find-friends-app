@@ -15,7 +15,7 @@ HERE = Path(__file__).parent
 SEP = ';'
 DATA_PATH = HERE / "welcome_survey_simple_v2.csv"
 MODEL_NAME = "welcome_survey_clustering_pipeline_v2"
-MODEL_PATH = HERE / MODEL_NAME  # dla PyCaret load_model()
+MODEL_PATH = HERE / f"{MODEL_NAME}.pkl"  # wskazuje na plik .pkl
 CLUSTER_INFO_PATH = HERE / "welcome_survey_cluster_names_and_descriptions_v2.json"
 COLS = ["age", "edu_level", "fav_animals", "fav_place", "gender"]
 

@@ -1,8 +1,8 @@
 streamlit
-pandas
-numpy
-scikit-learn
-scipy
-plotly
-pycaret
-numba
+pandas>=2.0.0,<2.3.0
+numpy>=1.21.0,<2.0.0
+scikit-learn>=1.3.0,<1.5.0
+scipy>=1.10.0,<1.15.0
+plotly>=5.0.0
+pycaret>=3.3.0
+numba>=0.58.0

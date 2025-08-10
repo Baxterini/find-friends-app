@@ -1,34 +1,41 @@
-{
+import json
+
+cluster_info = {
     "0": {
         "name": "🌿 Introwertyczni Marzyciele",
-        "description": "Osoby ceniące ciszę, naturę i głębokie rozmowy. Najczęściej spotkasz ich w lesie z książką lub kubkiem herbaty."
+        "description": "Grupa osób ceniących spokój i kontemplację. Preferują kameralne spotkania, lubią naturę i zwierzęta. Często mają wykształcenie wyższe i cenią sobie czas na refleksję."
     },
     "1": {
-        "name": "🎉 Społeczni Entuzjaści",
-        "description": "Uwielbiają towarzystwo, imprezy i nowe znajomości. Są energiczni, rozmowni i kochają psy!"
+        "name": "🎉 Społeczni Entuzjaści", 
+        "description": "Otwarci i energiczni ludzie, którzy uwielbiają towarzystwo. Aktywni społecznie, lubią nowe znajomości i wspólne aktywności. Często organizują spotkania i imprezy."
     },
     "2": {
         "name": "🧘‍♂️ Harmoniści",
-        "description": "Szukają równowagi we wszystkim. Lubią wodę, jogę, medytację i dobrze zaparzoną kawę."
+        "description": "Osoby szukające równowagi w życiu. Cenią sobie spokojne miejsca jak lasy czy góry. Lubią zwierzęta i preferują stabilne, długotrwałe relacje."
     },
     "3": {
         "name": "🔬 Umysły Analityczne",
-        "description": "Myślą logicznie, często związani z technologią lub nauką. Cenią konkret i jasną komunikację."
+        "description": "Racjonalni i systematyczni myśliciele. Często z wykształceniem technicznym lub naukowym. Preferują logiczne podejście do problemów i precyzyjne rozwiązania."
     },
     "4": {
         "name": "🎨 Artyści i Twórcy",
-        "description": "Z kreatywną duszą, kochają muzykę, sztukę, wyrażanie siebie. W grupie to często osoby inspirujące."
+        "description": "Kreatywni i wrażliwi estetycznie. Cenią sztukę, muzykę i wszystko co piękne. Mają bogatą wyobraźnię i potrzebę wyrażania siebie."
     },
     "5": {
         "name": "🌍 Poszukiwacze Przygód",
-        "description": "Eksplorują nowe miejsca, kultury i kuchnie. Kochają góry i podróże bez planu."
+        "description": "Aktywni i spontaniczni ludzie kochający podróże. Uwielbiają nowe miejsca, kulturę i doświadczenia. Często młodsi wiekiem, otwarci na zmiany."
     },
     "6": {
         "name": "🛋️ Domatorzy",
-        "description": "Najlepiej czują się w swoim przytulnym kącie. Cenią stabilność, ciepło i dobry serial."
+        "description": "Osoby ceniące komfort domowego zacisza. Lubią stabilność, rodzinne spotkania i spokojne hobby. Preferują znane i sprawdzone rozwiązania."
     },
     "7": {
         "name": "💼 Ambitni Realizatorzy",
-        "description": "Zorientowani na cele, rozwój i sukces. Zawsze z planem w ręku i kolejnym kursem na horyzoncie."
+        "description": "Zorientowani na cele i osiągnięcia. Praktyczni i zdecydowani w działaniu. Często w średnim wieku, z wyższym wykształceniem i jasnymi planami życiowymi."
     }
 }
+
+with open("modul_7/find_friends_v3/welcome_survey_cluster_names_and_descriptions_v2.json", "w", encoding="utf-8") as f:
+    json.dump(cluster_info, f, ensure_ascii=False, indent=4)
+
+print("✅ JSON nadpisany nowymi opisami")

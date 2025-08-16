@@ -1,0 +1,161 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+from pathlib import Path
+import json
+from typing import Dict, Any, List
+
+# Wykresy
+import plotly.express as px
+
+# ML (zamiast PyCaret)
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.cluster import KMeans
+from sklearn.pipeline import Pipeline
+
+# === USTAWIENIA STRONY ===
+st.set_page_config(page_title="Find Friends — KMeans", page_icon="🫱🏻‍🫲🏻", layout="wide")
+
+# === ŚCIEŻKI I PLIKI ===
+HERE = Path(__file__).parent
+DATA_PATH = HERE / "welcome_survey_simple_v2.csv"
+CLUSTER_INFO_PATH = HERE / "welcome_survey_cluster_names_and_descriptions_v2.json"  # opcjonalnie
+
+# Kolumny używane w modelu
+COLS: List[str] = ["age", "edu_level", "fav_animals", "fav_place", "gender"]
+
+# =========================
+#   FUNKCJE POMOCNICZE
+# =========================
+@st.cache_data
+def load_data(path: Path) -> pd.DataFrame:
+    df = pd.read_csv(path, sep=";", encoding="utf-8")
+    # trzymamy tylko potrzebne kolumny, ignorujemy brakujące
+    keep = [c for c in COLS if c in df.columns]
+    df = df[keep].dropna()
+    # wszystko jako string (one-hot później)
+    for c in keep:
+        df[c] = df[c].astype(str)
+    return df
+
+@st.cache_data
+def load_cluster_info(path: Path) -> Dict[str, Dict[str, str]]:
+    if not path.exists():
+        return {}
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+@st.cache_resource
+def train_model(df: pd.DataFrame, n_clusters: int) -> Pipeline:
+    # wszystkie kolumny traktujemy jako kategorie
+    cat_cols = df.columns.tolist()
+    pre = ColumnTransformer(
+        transformers=[("cat", OneHotEncoder(handle_unknown="ignore"), cat_cols)],
+        remainder="drop",
+    )
+    pipe = Pipeline(
+        steps=[
+            ("prep", pre),
+            ("kmeans", KMeans(n_clusters=n_clusters, n_init="auto", random_state=42)),
+        ]
+    )
+    pipe.fit(df)
+    return pipe
+
+def cluster_name_desc(cluster_id: int, info: Dict[str, Any]) -> Dict[str, str]:
+    """Zwróć {'name': ..., 'desc': ...} jeśli są w JSON, inaczej puste."""
+    key = str(cluster_id)
+    meta = info.get(key, {})
+    return {
+        "name": meta.get("name", f"Cluster {cluster_id}"),
+        "desc": meta.get("description", ""),
+    }
+
+# =========================
+#       DANE & MODEL
+# =========================
+if not DATA_PATH.exists():
+    st.error("❌ Brak pliku danych: `welcome_survey_simple_v2.csv` w katalogu głównym repo.")
+    st.stop()
+
+df_all = load_data(DATA_PATH)
+cluster_info = load_cluster_info(CLUSTER_INFO_PATH)
+
+with st.sidebar:
+    st.header("⚙️ Ustawienia")
+    # liczba klastrów — jeśli w JSON są nazwy, dopasuj do ich liczby
+    default_k = len(cluster_info) if len(cluster_info) >= 2 else 5
+    n_clusters = st.slider("Liczba klastrów (KMeans)", min_value=2, max_value=12, value=default_k, step=1)
+    st.caption("Możesz zmienić liczbę klastrów — model trenuje się w locie (cache).")
+
+model = train_model(df_all[COLS], n_clusters)
+df_all = df_all.copy()
+df_all["cluster"] = model.predict(df_all[COLS])
+
+# =========================
+#         UI — FORM
+# =========================
+st.title("Find Friends — app 🫱🏻‍🫲🏻 (KMeans)")
+st.markdown("Znajdź osoby o podobnych preferencjach. Model uczy się na danych ankietowych i przypisuje Cię do klastra.")
+
+# Wartości do formularza pobieramy z danych, żeby zgadzały się kategorie
+def choices(col: str) -> List[str]:
+    vals = sorted(df_all[col].astype(str).unique().tolist())
+    return vals if vals else ["brak"]
+
+with st.sidebar:
+    st.header("📝 Powiedz nam coś o sobie")
+    user_inputs = {}
+    for c in COLS:
+        user_inputs[c] = st.selectbox(c, options=choices(c), index=0, key=f"inp_{c}")
+
+# Predykcja klastra dla użytkownika
+user_df = pd.DataFrame([user_inputs])
+user_cluster = int(model.predict(user_df)[0])
+meta = cluster_name_desc(user_cluster, cluster_info)
+
+st.subheader("🔮 Twój wynik")
+st.write(f"Najbliżej Ci do grupy: **{meta['name']}** (ID: `{user_cluster}`)")
+if meta["desc"]:
+    st.info(meta["desc"])
+
+# =========================
+#       WIZUALIZACJE
+# =========================
+st.subheader("📊 Rozkład klastrów")
+cluster_counts = df_all["cluster"].value_counts().sort_index().reset_index()
+cluster_counts.columns = ["cluster", "count"]
+fig = px.bar(cluster_counts, x="cluster", y="count", title="Liczba osób w poszczególnych klastrach")
+st.plotly_chart(fig, use_container_width=True)
+
+# Osoby podobne (ten sam klaster)
+st.subheader("🧑‍🤝‍🧑 Osoby podobne (ten sam klaster)")
+similar = df_all[df_all["cluster"] == user_cluster].copy()
+# pokazujemy kolumny wejściowe + cluster
+show_cols = COLS + ["cluster"]
+st.dataframe(similar[show_cols].head(50), use_container_width=True)
+
+# Download podobnych
+csv_bytes = similar[show_cols].to_csv(index=False).encode("utf-8")
+st.download_button(
+    "⬇️ Pobierz listę podobnych (CSV)",
+    data=csv_bytes,
+    file_name=f"find_friends_cluster_{user_cluster}.csv",
+    mime="text/csv",
+)
+
+# =========================
+#         INFO / FOOTER
+# =========================
+with st.expander("ℹ️ Info techniczne"):
+    st.markdown(
+        """
+- Klasteryzacja: **KMeans (scikit-learn)** z One-Hot Encodingiem dla kolumn kategorycznych.  
+- Liczba klastrów możesz zmienić w panelu — model uczy się na starcie i jest cache'owany.  
+- (Opcjonalnie) Jeśli dodasz plik `welcome_survey_cluster_names_and_descriptions_v2.json`, nazwy i opisy klastrów pokażą się automatycznie.
+        """
+    )

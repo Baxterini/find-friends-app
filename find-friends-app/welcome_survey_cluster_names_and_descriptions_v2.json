@@ -1,0 +1,35 @@
+ {
+    "0": {
+        "name": "🌿 Introwertyczni Marzyciele",
+        "description": "Grupa osób ceniących spokój i kontemplację. Preferują kameralne spotkania, lubią naturę i zwierzęta. Często mają wykształcenie wyższe i cenią sobie czas na refleksję."
+    },
+    "1": {
+        "name": "🎉 Społeczni Entuzjaści", 
+        "description": "Otwarci i energiczni ludzie, którzy uwielbiają towarzystwo. Aktywni społecznie, lubią nowe znajomości i wspólne aktywności. Często organizują spotkania i imprezy."
+    },
+    "2": {
+        "name": "🧘‍♂️ Harmoniści",
+        "description": "Osoby szukające równowagi w życiu. Cenią sobie spokojne miejsca jak lasy czy góry. Lubią zwierzęta i preferują stabilne, długotrwałe relacje."
+    },
+    "3": {
+        "name": "🔬 Umysły Analityczne",
+        "description": "Racjonalni i systematyczni myśliciele. Często z wykształceniem technicznym lub naukowym. Preferują logiczne podejście do problemów i precyzyjne rozwiązania."
+    },
+    "4": {
+        "name": "🎨 Artyści i Twórcy",
+        "description": "Kreatywni i wrażliwi estetycznie. Cenią sztukę, muzykę i wszystko co piękne. Mają bogatą wyobraźnię i potrzebę wyrażania siebie."
+    },
+    "5": {
+        "name": "🌍 Poszukiwacze Przygód",
+        "description": "Aktywni i spontaniczni ludzie kochający podróże. Uwielbiają nowe miejsca, kulturę i doświadczenia. Często młodsi wiekiem, otwarci na zmiany."
+    },
+    "6": {
+        "name": "🛋️ Domatorzy",
+        "description": "Osoby ceniące komfort domowego zacisza. Lubią stabilność, rodzinne spotkania i spokojne hobby. Preferują znane i sprawdzone rozwiązania."
+    },
+    "7": {
+        "name": "💼 Ambitni Realizatorzy",
+        "description": "Zorientowani na cele i osiągnięcia. Praktyczni i zdecydowani w działaniu. Często w średnim wieku, z wyższym wykształceniem i jasnymi planami życiowymi."
+    }
+}
+
